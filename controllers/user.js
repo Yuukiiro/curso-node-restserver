@@ -1,7 +1,10 @@
 const { request, response } = require('express');
 
+const Usuario = require('../models/user'); // ERROR (+ no reconoce la clase)
+
 class Usuarios {
     get(req = request, res = response){
+        //const usuario = new Usuario(req.body);
         const {
             nombre = null,
             apikey = null,
