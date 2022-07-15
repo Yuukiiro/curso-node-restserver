@@ -1,12 +1,16 @@
 const { request, response } = require('express');
 
-const Usuario = require('../models/user'); // ERROR (+ no reconoce la clase)
+const bcryptjs = require('bcryptjs');
+
+const Usuario = require('../models/user');
 
 class Usuarios {
     get(req = request, res = response){
-        //const usuario = new Usuario(req.body);
+        // body
+        const body = req.body;
+        
+        // query
         const {
-            nombre = null,
             apikey = null,
             page = 1,
             limit = 10
@@ -14,20 +18,38 @@ class Usuarios {
 
         res.json({
             msg: "Bienvenido a usuarios",
-            nombre,
             apikey,
             page,
-            limit,
+            limit
         });
     }
-    post(req, res = response){
-        //const body = req.body;
-        const {nombre, edad} = req.body;
+    async post(req, res = response){
+        // body
+        const body = req.body;
+        const {
+            nombre,
+            correo,
+            password,
+            rol
+        } = req.body;
 
+        // Usuario (mongoose)
+        const usuario = new Usuario({
+            nombre,
+            correo,
+            password,
+            rol
+        });
+
+        // Guardar en DB
+        usuario.save();
+
+        // Encriptar la contraseña
+        const salt = bcryptjs.genSaltSync();
+        usuario.password = bcryptjs.hashSync(password, salt);
         res.json({
             msg: "post / usuarios",
-            nombre,
-            edad
+            usuario
         });
     }
     put(req, res = response){
